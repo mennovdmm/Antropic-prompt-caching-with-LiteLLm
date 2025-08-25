@@ -23,10 +23,17 @@ The cache uses a **5-minute sliding window** - each cache hit resets the timer, 
 │  Langflow   │────▶│   LiteLLM    │────▶│  Anthropic   │
 │   Agent     │     │    Proxy     │     │     API      │
 └─────────────┘     └──────────────┘     └──────────────┘
-                           │
-                    Injects cache_control
-                    into system messages
+       ↑                   │
+  Custom Component  Injects cache_control
+   (See Step 4)     into system messages
 ```
+
+## 🎯 CRITICAL: Langflow Integration
+
+**⚠️ IMPORTANT**: You need a custom Langflow component to connect to LiteLLM!
+- **Full guide**: [langflow/LANGFLOW-SETUP.md](./langflow/LANGFLOW-SETUP.md)
+- **Component code**: [langflow/litellm-component.py](./langflow/litellm-component.py)
+- This is the missing piece that makes everything work!
 
 ## ⚡ Quick Start (30 Minutes to Production)
 
@@ -87,15 +94,23 @@ docker logs litellm-proxy --tail 20
 
 ### 4. Langflow Configuration
 
-In your Langflow agent/component:
+**🎯 THE KEY STEP**: Add custom component to Langflow!
 
-```python
-# LiteLLM API Settings
-base_url = "http://litellm-proxy:4000/v1"  # Use container name!
-api_key = "sk-litellm-master-2024"
-model = "claude-sonnet-4-cached"  # For production
-# model = "claude-sonnet-4-nocache"  # For development
-```
+1. **Add Custom Component**:
+   - Copy `langflow/litellm-component.py` to Langflow
+   - Go to Settings → Custom Components → New
+   - Paste the component code
+
+2. **Configure in your Flow**:
+   - Replace existing LLM/Anthropic component with "LiteLLM Proxy"
+   - Settings:
+     ```
+     Base URL: http://litellm-proxy:4000/v1  # Docker
+     API Key: sk-litellm-master-2024
+     Model: claude-sonnet-4-cached
+     ```
+
+**📖 Full Visual Guide**: See [langflow/LANGFLOW-SETUP.md](./langflow/LANGFLOW-SETUP.md) for screenshots and details!
 
 **⚠️ CRITICAL**: Use `litellm-proxy` (container name), NOT `localhost`!
 
