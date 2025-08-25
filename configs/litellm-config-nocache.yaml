@@ -1,0 +1,24 @@
+# Development configuration without caching
+# Use this when testing prompt changes
+
+model_list:
+  # Development model - NO CACHE
+  - model_name: claude-sonnet-4-nocache
+    litellm_params:
+      model: anthropic/claude-sonnet-4-20250514
+      api_key: os.environ/ANTHROPIC_API_KEY
+      # No cache_control_injection_points!
+      # This ensures you see prompt changes immediately
+  
+  # Also available for testing
+  - model_name: claude-opus-4-nocache
+    litellm_params:
+      model: anthropic/claude-opus-4-1-20250805
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+litellm_settings:
+  drop_params: false
+  set_verbose: true  # Keep verbose for development
+  
+general_settings:
+  master_key: sk-litellm-master-2024  # Same key for consistency
